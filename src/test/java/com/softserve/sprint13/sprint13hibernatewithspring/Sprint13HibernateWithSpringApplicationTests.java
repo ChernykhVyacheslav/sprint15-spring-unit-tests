@@ -1,12 +1,15 @@
 package com.softserve.sprint13.sprint13hibernatewithspring;
 
 import com.softserve.sprint13.entity.*;
-import com.softserve.sprint13.exception.IncorrectIdException;
+import com.softserve.sprint13.exception.CannotDeleteOwnerWithElementsException;
+import com.softserve.sprint13.exception.EntityNotFoundByIdException;
 import com.softserve.sprint13.service.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.validation.ConstraintViolationException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -16,9 +19,13 @@ import java.util.stream.Collectors;
 import static com.softserve.sprint13.entity.Progress.TaskStatus.FAIL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+;
+
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Sprint13HibernateWithSpringApplicationTests {
+
+    private static boolean setUpIsDone = false;
 
     @Autowired
     UserService userService;
@@ -40,6 +47,64 @@ class Sprint13HibernateWithSpringApplicationTests {
         this.progressService = progressService;
         this.sprintService = sprintService;
         this.marathonService = marathonService;
+    }
+
+    @BeforeEach
+    private void fillDataBase() {
+        if(!setUpIsDone) {
+            try {
+                Marathon marathon = new Marathon();
+                marathon.setTitle("Marathon1");
+                marathonService.createOrUpdateMarathon(marathon);
+
+                for (int i = 0; i < 2; i++) {
+                    User mentor = new User();
+                    mentor.setEmail("mentoruser" + i + "@dh.com");
+                    mentor.setFirstName("MentorName" + i);
+                    mentor.setLastName("MentorSurname" + i);
+                    mentor.setPassword("qwertyqwerty" + i);
+                    mentor.setRole(User.Role.MENTOR);
+                    userService.createOrUpdateUser(mentor);
+                    userService.addUserToMarathon(mentor, marathon);
+
+                    User trainee = new User();
+                    trainee.setEmail("traineeUser" + i + "@dh.com");
+                    trainee.setFirstName("TraineeName" + i);
+                    trainee.setLastName("TraineeSurname" + i);
+                    trainee.setPassword("qwerty^qwerty" + i);
+                    trainee.setRole(User.Role.TRAINEE);
+                    userService.createOrUpdateUser(trainee);
+                    userService.addUserToMarathon(trainee, marathon);
+                }
+
+                for (int i = 0; i < 2; i++) {
+                    Sprint sprint = new Sprint();
+                    sprint.setTitle("Sprint" + i);
+                    sprint.setStartDate(Instant.now());
+                    sprint.setFinishDate(Instant.now().plusSeconds(1000));
+                    sprintService.createOrUpdateSprint(sprint);
+                    sprintService.addSprintToMarathon(sprint, marathon);
+
+                    for (int j = 0; j < 2; j++) {
+                        Task task = new Task();
+                        task.setTitle("Task" + i + j);
+                        taskService.createOrUpdateTask(task);
+                        taskService.addTaskToSprint(task, sprint);
+
+                        List<User> trainees = userService.getAllByRole("TRAINEE");
+                        for (User trainee :
+                                trainees) {
+                            progressService.addTaskForStudent(task, trainee);
+                        }
+                    }
+                }
+            } catch (ConstraintViolationException |
+                    CannotDeleteOwnerWithElementsException |
+                    EntityNotFoundByIdException e) {
+                System.out.println(e.getMessage());
+            }
+            setUpIsDone = true;
+        }
     }
 
     @Test
@@ -205,10 +270,10 @@ class Sprint13HibernateWithSpringApplicationTests {
         userService.deleteUser(userService.getUserById(1L));
         try {
             userService.getUserById(1L);
-        } catch (IncorrectIdException ex) {
+        } catch (EntityNotFoundByIdException ex) {
             e = ex;
         }
-        assertEquals(IncorrectIdException.class, e.getClass(), "checkDeleteUser()");
+        assertEquals(EntityNotFoundByIdException.class, e.getClass(), "checkDeleteUser()");
     }
 
     @Test
@@ -218,10 +283,10 @@ class Sprint13HibernateWithSpringApplicationTests {
         progressService.deleteProgress(progressService.getProgressById(1L));
         try {
             progressService.getProgressById(1L);
-        } catch (IncorrectIdException ex) {
+        } catch (EntityNotFoundByIdException ex) {
             e = ex;
         }
-        assertEquals(IncorrectIdException.class, e.getClass(), "checkDeleteProgress()");
+        assertEquals(EntityNotFoundByIdException.class, e.getClass(), "checkDeleteProgress()");
     }
 
     @Test
@@ -249,10 +314,10 @@ class Sprint13HibernateWithSpringApplicationTests {
         taskService.deleteTask(task);
         try {
             taskService.getTaskById(1L);
-        } catch (IncorrectIdException ex) {
+        } catch (EntityNotFoundByIdException ex) {
             e = ex;
         }
-        assertEquals(IncorrectIdException.class, e.getClass(), "checkDeleteTaskSuccess()");
+        assertEquals(EntityNotFoundByIdException.class, e.getClass(), "checkDeleteTaskSuccess()");
     }
 
     @Test
@@ -282,10 +347,10 @@ class Sprint13HibernateWithSpringApplicationTests {
         sprintService.deleteSprint(sprint);
         try {
             sprintService.getSprintById(1L);
-        } catch (IncorrectIdException ex) {
+        } catch (EntityNotFoundByIdException ex) {
             e = ex;
         }
-        assertEquals(IncorrectIdException.class, e.getClass(), "checkDeleteSprintSuccess()");
+        assertEquals(EntityNotFoundByIdException.class, e.getClass(), "checkDeleteSprintSuccess()");
     }
 
     @Test
@@ -294,7 +359,7 @@ class Sprint13HibernateWithSpringApplicationTests {
         Throwable e = new Throwable();
         try {
             marathonService.deleteMarathonById(1L);
-        } catch (RuntimeException ex) {
+        } catch (CannotDeleteOwnerWithElementsException ex) {
             e = ex;
         }
         assertEquals("Can't remove a marathon that has sprints.", e.getMessage(), "checkDeleteMarathonFail()");
@@ -318,9 +383,9 @@ class Sprint13HibernateWithSpringApplicationTests {
         marathonService.deleteMarathonById(1L);
         try {
             marathonService.getMarathonById(1L);
-        } catch (IncorrectIdException ex) {
+        } catch (EntityNotFoundByIdException ex) {
             e = ex;
         }
-        assertEquals(IncorrectIdException.class, e.getClass(), "checkDeleteMarathonSuccess()");
+        assertEquals(EntityNotFoundByIdException.class, e.getClass(), "checkDeleteMarathonSuccess()");
     }
 }

@@ -2,14 +2,13 @@ package com.softserve.sprint13.service;
 
 import com.softserve.sprint13.entity.Sprint;
 import com.softserve.sprint13.entity.Task;
-import com.softserve.sprint13.exception.IncorrectIdException;
+import com.softserve.sprint13.exception.EntityNotFoundByIdException;
 import com.softserve.sprint13.repository.SprintRepository;
 import com.softserve.sprint13.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -56,7 +55,7 @@ public class TaskServiceImpl implements TaskService {
         Optional<Task> task = taskRepository.findById(id);
         if (task.isPresent())
             return task.get();
-        else throw new IncorrectIdException("No task for given id");
+        else throw new EntityNotFoundByIdException("No task for given id");
     }
 
     @Override

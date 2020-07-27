@@ -1,5 +1,6 @@
 package com.softserve.sprint13.entity;
 
+import com.softserve.sprint13.exception.CannotDeleteOwnerWithElementsException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -10,17 +11,15 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "marathon")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Marathon {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @NotBlank(message = "Marathon title cannot be empty")
-    @Column(name = "title", unique = true)
+    @Column(unique = true)
     @EqualsAndHashCode.Include
     private String title;
 
@@ -43,7 +42,7 @@ public class Marathon {
     @PreRemove
     public void checkSprintAssociationBeforeRemoval() {
         if (!this.sprints.isEmpty()) {
-            throw new RuntimeException("Can't remove a marathon that has sprints.");
+            throw new CannotDeleteOwnerWithElementsException("Can't remove a marathon that has sprints.");
         }
     }
 }

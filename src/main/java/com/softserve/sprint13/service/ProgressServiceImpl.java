@@ -4,7 +4,7 @@ import com.softserve.sprint13.entity.Progress;
 import com.softserve.sprint13.entity.Task;
 import com.softserve.sprint13.entity.User;
 import com.softserve.sprint13.entity.User.Role;
-import com.softserve.sprint13.exception.IncorrectIdException;
+import com.softserve.sprint13.exception.EntityNotFoundByIdException;
 import com.softserve.sprint13.repository.ProgressRepository;
 import com.softserve.sprint13.repository.SprintRepository;
 import com.softserve.sprint13.repository.TaskRepository;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,7 +35,7 @@ public class ProgressServiceImpl implements ProgressService {
         Optional<Progress> progress = progressRepository.findById(id);
         if (progress.isPresent())
             return progress.get();
-        else throw new IncorrectIdException("No progress for given id");
+        else throw new EntityNotFoundByIdException("No progress for given id");
     }
 
     @Override
@@ -47,7 +46,7 @@ public class ProgressServiceImpl implements ProgressService {
             Progress newProgress = new Progress();
             newProgress.setTask(taskEntity);
             newProgress.setTrainee(userEntity);
-            newProgress.setStatus(Progress.TaskStatus.PENDING);
+            newProgress.setStatus(Progress.TaskStatus.NEW);
             createOrUpdateProgress(newProgress);
             userEntity.getProgressList().add(newProgress);
             return userRepository.save(userEntity) != null;
@@ -82,12 +81,12 @@ public class ProgressServiceImpl implements ProgressService {
 
     @Override
     public List<Progress> allProgressByUserIdAndMarathonId(Long userId, Long marathonId) {
-        return progressRepository.allProgressByUserIdAndMarathonId(userId,marathonId);
+        return progressRepository.findAllByTraineeIdAndTaskSprintMarathonId(userId,marathonId);
     }
 
     @Override
     public List<Progress> allProgressByUserIdAndSprintId(Long userId, Long sprintId) {
-        return progressRepository.allProgressByUserIdAndSprintId(userId,sprintId);
+        return progressRepository.findAllByTraineeIdAndTaskSprintId(userId,sprintId);
     }
 
     @Override

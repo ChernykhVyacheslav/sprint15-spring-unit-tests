@@ -1,5 +1,6 @@
 package com.softserve.sprint13.entity;
 
+import com.softserve.sprint13.exception.CannotDeleteOwnerWithElementsException;
 import com.softserve.sprint13.validation.StartBeforeEndDateValidation;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,33 +9,27 @@ import lombok.ToString;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 @Data
 @Entity
-@Table(name = "sprint")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @StartBeforeEndDateValidation(message = "Start date should be before finish date.")
 public class Sprint {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @NotNull
-    @Temporal(TemporalType.DATE)
-    @Column(name = "start_date")
-    private Date startDate;
+    private Instant startDate;
 
     @NotNull
-    @Temporal(TemporalType.DATE)
-    @Column(name = "finish_date")
-    private Date finishDate;
+    private Instant finishDate;
 
     @NotBlank(message = "Sprint title cannot be empty")
-    @Column(name = "title", unique = true)
+    @Column(unique = true)
     @EqualsAndHashCode.Include
     private String title;
 
@@ -55,7 +50,7 @@ public class Sprint {
     @PreRemove
     public void checkTaskAssociationBeforeRemoval() {
         if (!this.tasks.isEmpty()) {
-            throw new RuntimeException("Can't remove a sprint that has tasks.");
+            throw new CannotDeleteOwnerWithElementsException("Can't remove a sprint that has tasks.");
         }
     }
 }
