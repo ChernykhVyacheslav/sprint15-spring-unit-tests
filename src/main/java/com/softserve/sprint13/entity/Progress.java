@@ -8,37 +8,30 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.Instant;
 
 @Data
 @Entity
-@Table(name = "progress")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Progress {
 
     public enum TaskStatus {
-        PASS, FAIL, PENDING
+        NEW, PASS, FAIL, PENDING
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "start_date")
-    private Date startDate;
+    private Instant startDate;
 
     @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "update_date")
-    private Date updateDate;
+    private Instant updateDate;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private TaskStatus status;
+    private TaskStatus status = TaskStatus.NEW;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})

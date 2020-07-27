@@ -12,7 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Constraint(validatedBy = StartBeforeEndDateValidator.class)
 public @interface StartBeforeEndDateValidation {
-    String message() default "{com.softserve.sprint13.validation.ValidateEnum.message}";
+    String message() default "{com.softserve.sprint13.validation.StartBeforeEndDateValidation.message}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

@@ -2,14 +2,13 @@ package com.softserve.sprint13.service;
 
 import com.softserve.sprint13.entity.Marathon;
 import com.softserve.sprint13.entity.Sprint;
-import com.softserve.sprint13.exception.IncorrectIdException;
+import com.softserve.sprint13.exception.EntityNotFoundByIdException;
 import com.softserve.sprint13.repository.MarathonRepository;
 import com.softserve.sprint13.repository.SprintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +25,7 @@ public class SprintServiceImpl implements SprintService {
         Optional<Marathon> marathon = marathonRepository.findById(id);
         if (marathon.isPresent())
             return marathon.get().getSprints();
-        else throw new IncorrectIdException("No marathon for given id");
+        else throw new EntityNotFoundByIdException("No marathon for given id");
     }
 
     @Override
@@ -62,7 +61,7 @@ public class SprintServiceImpl implements SprintService {
         Optional<Sprint> sprint = sprintRepository.findById(id);
         if (sprint.isPresent())
             return sprint.get();
-        else throw new IncorrectIdException("No sprint for given id");
+        else throw new EntityNotFoundByIdException("No sprint for given id");
     }
 
     @Override

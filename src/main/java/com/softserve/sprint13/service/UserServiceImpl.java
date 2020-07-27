@@ -3,7 +3,7 @@ package com.softserve.sprint13.service;
 import com.softserve.sprint13.entity.Marathon;
 import com.softserve.sprint13.entity.Progress;
 import com.softserve.sprint13.entity.User;
-import com.softserve.sprint13.exception.IncorrectIdException;
+import com.softserve.sprint13.exception.EntityNotFoundByIdException;
 import com.softserve.sprint13.repository.MarathonRepository;
 import com.softserve.sprint13.repository.ProgressRepository;
 import com.softserve.sprint13.repository.UserRepository;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +40,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent())
             return user.get();
-        else throw new IncorrectIdException("No user for given id");
+        else throw new EntityNotFoundByIdException("No user for given id");
     }
 
     @Override

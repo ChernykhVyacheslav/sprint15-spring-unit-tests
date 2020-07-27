@@ -1,5 +1,6 @@
 package com.softserve.sprint13.entity;
 
+import com.softserve.sprint13.exception.CannotDeleteOwnerWithElementsException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -8,32 +9,26 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 @Data
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "task")
 public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_date")
-    private Date createDate;
+    private Instant createDate;
 
     @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "update_date")
-    private Date updateDate;
+    private Instant updateDate;
 
     @NotBlank(message = "Task title cannot be empty")
-    @Column(name = "title", unique = true)
+    @Column(unique = true)
     @EqualsAndHashCode.Include
     private String title;
 
@@ -54,7 +49,7 @@ public class Task {
     @PreRemove
     public void checkProgressAssociationBeforeRemoval() {
         if (!this.progressList.isEmpty()) {
-            throw new RuntimeException("Can't remove a task that has progress entities.");
+            throw new CannotDeleteOwnerWithElementsException("Can't remove a task that has progress entities.");
         }
     }
 }

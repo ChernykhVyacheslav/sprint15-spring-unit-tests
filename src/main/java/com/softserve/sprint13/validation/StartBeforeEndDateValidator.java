@@ -4,7 +4,7 @@ import com.softserve.sprint13.entity.Sprint;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.Date;
+import java.time.Instant;
 
 public class StartBeforeEndDateValidator implements ConstraintValidator<StartBeforeEndDateValidation, Sprint> {
 
@@ -14,9 +14,9 @@ public class StartBeforeEndDateValidator implements ConstraintValidator<StartBef
 
     @Override
     public boolean isValid(Sprint bean, ConstraintValidatorContext context) {
-        final Date startDate = bean.getStartDate();
-        final Date endDate = bean.getFinishDate();
+        final Instant startDate = bean.getStartDate();
+        final Instant endDate = bean.getFinishDate();
 
-        return !startDate.after(endDate);
+        return !startDate.isAfter(endDate);
     }
 }
