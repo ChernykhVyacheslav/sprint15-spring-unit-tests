@@ -14,17 +14,13 @@ import java.util.List;
 @RequestMapping("/marathons")
 public class MarathonsController {
 
-
-
     private MarathonService marathonService;
 
     public MarathonsController(MarathonService theMarathonService) {
         marathonService = theMarathonService;
     }
 
-    // add mapping for "/list"
-
-    @GetMapping("/list")
+    @GetMapping
     public String listMarathons(Model theModel) {
 
         // get marathons from db
