@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.softserve.sprint13</groupId>
-    <artifactId>sprint13-hibernate-with-spring</artifactId>
+    <artifactId>sprint14-spring-mvc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>sprint13-hibernate-with-spring</name>
-    <description>Project using Hibernate and Spring</description>
+    <name>sprint14-spring-mvc</name>
+    <description>Project using Spring MVC with Thymeleaf</description>
 
     <properties>
         <java.version>11</java.version>
@@ -31,7 +31,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
