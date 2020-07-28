@@ -32,7 +32,6 @@ public class MarathonServiceImpl implements MarathonService {
         else throw new EntityNotFoundByIdException("No marathon for given id");
     }
 
-
     @Override
     public Marathon createOrUpdateMarathon(Marathon marathon) {
         if (marathon.getId() != null) {
@@ -40,12 +39,22 @@ public class MarathonServiceImpl implements MarathonService {
             if (marathonToUpdate.isPresent()) {
                 Marathon newMarathon = marathonToUpdate.get();
                 newMarathon.setTitle(marathon.getTitle());
-                newMarathon = marathonRepository.save(marathon);
+                newMarathon = marathonRepository.save(newMarathon);
                 return newMarathon;
             }
         }
         marathon = marathonRepository.save(marathon);
         return marathon;
+    }
+
+    @Override
+    public void closeMarathonById(Long id) {
+        Optional<Marathon> marathon = marathonRepository.findById(id);
+        if (marathon.isPresent()){
+            marathon.get().setClosed(true);
+            marathonRepository.save(marathon.get());
+        }
+        else throw new EntityNotFoundByIdException("No marathon for given id");
     }
 
     @Override

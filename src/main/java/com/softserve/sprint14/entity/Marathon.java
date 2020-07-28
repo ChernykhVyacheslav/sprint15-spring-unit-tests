@@ -23,6 +23,8 @@ public class Marathon {
     @EqualsAndHashCode.Include
     private String title;
 
+    private boolean isClosed = false;
+
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
                     CascadeType.DETACH, CascadeType.REFRESH})

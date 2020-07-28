@@ -9,4 +9,5 @@ public interface MarathonService {
     public Marathon getMarathonById(Long id);
     public Marathon createOrUpdateMarathon(Marathon marathon);
     public void deleteMarathonById(Long id);
+    public void closeMarathonById(Long theId);
 }
