@@ -7,7 +7,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 @Data
@@ -29,7 +28,6 @@ public class Progress {
     @UpdateTimestamp
     private Instant updateDate;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private TaskStatus status = TaskStatus.NEW;
 
