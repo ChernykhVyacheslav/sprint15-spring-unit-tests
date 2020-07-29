@@ -5,6 +5,7 @@ import com.softserve.sprint14.entity.Sprint;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -45,15 +46,24 @@ public class MarathonDTO {
         this.title = title;
     }
 
-    public List<Long> getUsers() {
+    public List<Long> getUserIds() {
         return Arrays.stream(users).map(s -> {
             Pattern pattern = Pattern.compile("(?<=id=).+(?=, email)");
             Matcher matcher = pattern.matcher(s);
             if (matcher.find()) {
                 return Long.parseLong(matcher.group(0));
             }
-            return -1L;
-        }).peek(System.out::println).collect(Collectors.toList());
+            pattern = Pattern.compile("(?<=id=).+");
+            matcher = pattern.matcher(s);
+            if (matcher.find()) {
+                return Long.parseLong(matcher.group(0));
+            }
+            return null;
+        }).distinct().filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    public String[] getUsers() {
+        return users;
     }
 
     public void setUsers(String[] users) {

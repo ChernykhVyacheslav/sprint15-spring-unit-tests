@@ -55,6 +55,17 @@ public class MarathonServiceImpl implements MarathonService {
     }
 
     @Override
+    public void openMarathonById(Long id) {
+        Optional<Marathon> marathon = marathonRepository.findById(id);
+        if (marathon.isPresent()){
+            Marathon newMarathon = marathon.get();
+            newMarathon.setClosed(false);
+            marathonRepository.save(newMarathon);
+        }
+        else throw new EntityNotFoundByIdException("No marathon exists for given id");
+    }
+
+    @Override
     public void deleteMarathonById(Long id) {
         Optional<Marathon> marathon = marathonRepository.findById(id);
         if (marathon.isPresent())

@@ -8,28 +8,28 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-    <title>Add Users To Marathon</title>
+    <title>Add User To Marathons</title>
 </head>
 
 <body>
 
 <div class="container">
 
-    <h3>Add Users To Marathon <span th:text="${marathon.id}"></span></h3>
+    <h3>Add User #<span th:text="${user.id}"></span> To Marathons </h3>
     <hr>
 
-    <form action="#" th:action="@{/students/{marathonId}/add/(marathonId=${marathon.id})}"
-          th:object="${marathon}" method="POST">
+    <form action="#" th:action="@{/students/{userId}/add-marathons-to-student/(userId=${user.id})}"
+          th:object="${user}" method="POST">
 
         <div class="form-group blu-margin">
             <label for="users" class="col-form-label col-form-label-lg">Add Students(multiple select): </label>
-            <select id="users" class="form-control" th:field="*{users}" multiple="multiple">
+            <select id="users" class="form-control" th:field="*{marathons}" multiple="multiple">
                 <option class="list-group-item list-group-item-info"
-                        th:each="user : ${users}"
-                        th:value="${user}"
-                        th:field="*{users}"
-                        th:if="${!marathon.getUsers().contains(user)}"
-                        th:text="${user.firstName + ' ' + user.lastName}">
+                        th:each="marathon : ${marathons}"
+                        th:value="${marathon}"
+                        th:field="*{marathons}"
+                        th:if="${!user.getMarathons().contains(marathon)}"
+                        th:text="${marathon.title}">
                 </option>
             </select>
         </div>
