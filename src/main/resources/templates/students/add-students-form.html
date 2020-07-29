@@ -2,11 +2,9 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
@@ -20,19 +18,16 @@
     <h3>Add Users To Marathon</h3>
     <hr>
 
-    <form action="#" th:action="@{/marathons/add-students}"
+    <form action="#" th:action="@{/students/{marathonId}/add-students/(marathonId=${marathon.id})}"
           th:object="${marathon}" method="POST">
 
-        <input type="hidden" th:field="*{id}"/>
-
         <div class="form-group blu-margin">
-            <label for="users" class="col-sm-1 col-form-label col-form-label-lg">Add Users: </label>
+            <label for="users" class="col-form-label col-form-label-lg">Add Students(multiple select): </label>
             <select id="users" class="form-control" th:field="*{users}" multiple="multiple">
                 <option class="list-group-item list-group-item-info"
                         th:each="user : ${users}"
-                        th:if="${user.getRole().toString() == 'TRAINEE'}"
                         th:value="${user}"
-                        th:text="${user.getFirstName() + ' ' + user.getLastName()}">
+                        th:text="${user.firstName + ' ' + user.lastName}">
                 </option>
             </select>
         </div>

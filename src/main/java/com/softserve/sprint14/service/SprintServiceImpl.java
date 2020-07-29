@@ -5,7 +5,7 @@ import com.softserve.sprint14.entity.Sprint;
 import com.softserve.sprint14.exception.EntityNotFoundByIdException;
 import com.softserve.sprint14.repository.MarathonRepository;
 import com.softserve.sprint14.repository.SprintRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,27 +14,32 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class SprintServiceImpl implements SprintService {
-    @Autowired
-    SprintRepository sprintRepository;
-    @Autowired
-    MarathonRepository marathonRepository;
+
+    private final SprintRepository sprintRepository;
+
+    private final MarathonRepository marathonRepository;
+
+    private final MarathonService marathonService;
 
     @Override
     public List<Sprint> getSprintByMarathonId(Long id) {
-        Optional<Marathon> marathon = marathonRepository.findById(id);
-        if (marathon.isPresent())
-            return marathon.get().getSprints();
-        else throw new EntityNotFoundByIdException("No marathon for given id");
+        return sprintRepository.getAllSprintsByMarathonId(id);
     }
 
     @Override
     public boolean addSprintToMarathon(Sprint sprint, Marathon marathon) {
-        Sprint sprintEntity = sprintRepository.getOne(sprint.getId());
-        Marathon marathonEntity = marathonRepository.getOne(marathon.getId());
-        sprintEntity.setMarathon(marathonEntity);
-        marathonEntity.getSprints().add(sprintEntity);
-        return marathonRepository.save(marathonEntity) != null && sprintRepository.save(sprintEntity) != null;
+        if (sprint.getId() == null) {
+            Marathon marathonEntity = marathonRepository.getOne(marathon.getId());
+            if (!sprintRepository.findFirstByTitleAndMarathon(sprint.getTitle(), marathonEntity).isPresent()) {
+                sprint.setMarathon(marathonEntity);
+                sprintRepository.save(sprint);
+                marathonEntity.getSprints().add(sprint);
+                return marathonRepository.save(marathonEntity) != null;
+            }
+        }
+        return false;
     }
 
 
@@ -44,16 +49,14 @@ public class SprintServiceImpl implements SprintService {
             Optional<Sprint> sprintToUpdate = sprintRepository.findById(sprint.getId());
             if (sprintToUpdate.isPresent()) {
                 Sprint newSprint = sprintToUpdate.get();
-                newSprint.setFinishDate(sprint.getFinishDate());
-                newSprint.setStartDate(sprint.getStartDate());
                 newSprint.setTitle(sprint.getTitle());
+                newSprint.setStartDate(sprint.getStartDate());
+                newSprint.setFinishDate(sprint.getFinishDate());
                 newSprint.setMarathon(sprint.getMarathon());
-                newSprint = sprintRepository.save(newSprint);
-                return newSprint;
+                return sprintRepository.save(newSprint);
             }
         }
-        sprint = sprintRepository.save(sprint);
-        return sprint;
+        return sprintRepository.save(sprint);
     }
 
     @Override

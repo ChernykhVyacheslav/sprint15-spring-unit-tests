@@ -18,7 +18,5 @@ public interface UserService {
 
     public boolean addUserToMarathon(User user, Marathon marathon);
 
-    public boolean addUserToProgress(User user, Progress progress);
-
     public User deleteUser(User user);
 }

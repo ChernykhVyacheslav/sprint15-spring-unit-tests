@@ -13,7 +13,6 @@ public interface ProgressService {
     public boolean setStatus(Progress.TaskStatus taskStatus, Progress progress);
     public List<Progress> allProgressByUserIdAndMarathonId(Long userId, Long marathonId);
     public List<Progress> allProgressByUserIdAndSprintId(Long userId, Long sprintId);
-    public boolean addProgressToUser(Progress progress, User user);
 
     List<Progress> getAll();
 

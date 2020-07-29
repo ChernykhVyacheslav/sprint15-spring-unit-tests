@@ -49,19 +49,11 @@ public class User {
     @ToString.Exclude
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinTable(
-            name = "marathon_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "marathon_id"))
+    @ManyToMany(mappedBy = "users")
     @ToString.Exclude
     private List<Marathon> marathons;
 
-    @OneToMany(fetch = FetchType.LAZY,
-            mappedBy = "trainee",
-            cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "trainee")
     @ToString.Exclude
     private List<Progress> progressList;
 

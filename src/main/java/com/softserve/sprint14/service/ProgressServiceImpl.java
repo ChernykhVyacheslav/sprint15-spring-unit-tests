@@ -8,7 +8,7 @@ import com.softserve.sprint14.repository.ProgressRepository;
 import com.softserve.sprint14.repository.SprintRepository;
 import com.softserve.sprint14.repository.TaskRepository;
 import com.softserve.sprint14.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,37 +18,30 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class ProgressServiceImpl implements ProgressService {
 
-    @Autowired
     ProgressRepository progressRepository;
-    @Autowired
+
     TaskRepository taskRepository;
-    @Autowired
+
     SprintRepository sprintRepository;
-    @Autowired
+
     UserRepository userRepository;
 
     @Override
     public Progress getProgressById(Long id) {
-        Optional<Progress> progress = progressRepository.findById(id);
-        if (progress.isPresent())
-            return progress.get();
-        else throw new EntityNotFoundByIdException("No progress for given id");
+        return progressRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundByIdException(("No Progress exist for given id")));
     }
 
     @Override
     public boolean addTaskForStudent(Task task, User user) {
         if (user.getRole() == User.Role.TRAINEE){
-            Task taskEntity = taskRepository.getOne(task.getId());
-            User userEntity = userRepository.getOne(user.getId());
             Progress newProgress = new Progress();
-            newProgress.setTask(taskEntity);
-            newProgress.setTrainee(userEntity);
-            newProgress.setStatus(Progress.TaskStatus.NEW);
-            createOrUpdateProgress(newProgress);
-            userEntity.getProgressList().add(newProgress);
-            return userRepository.save(userEntity) != null;
+            newProgress.setTask(task);
+            newProgress.setTrainee(user);
+            return progressRepository.save(newProgress) != null;
         }
         return false;
     }
@@ -62,19 +55,22 @@ public class ProgressServiceImpl implements ProgressService {
                 newProgress.setStatus(progress.getStatus());
                 newProgress.setTask(progress.getTask());
                 newProgress.setTrainee(progress.getTrainee());
-                newProgress = progressRepository.save(progress);
-                return newProgress;
+                return progressRepository.save(progress);
             }
         }
-        progress = progressRepository.save(progress);
-        return progress;
+        return progressRepository.save(progress);
     }
 
     @Override
     public boolean setStatus(Progress.TaskStatus taskStatus, Progress progress) {
-        Optional<Progress> progressEntity = progressRepository.findById(progress.getId());
-        if(progressEntity.isPresent())
-            progress.setStatus(taskStatus);
+        Optional<Progress> progressEntityOpt = progressRepository.findById(progress.getId());
+        if(progressEntityOpt.isPresent()) {
+            Progress progressEntity = progressEntityOpt.get();
+            if (progressEntity.getStatus() != taskStatus) {
+                progressEntity.setStatus(taskStatus);
+                return true;
+            }
+        }
         return progressRepository.save(progress)!=null;
     }
 
@@ -86,14 +82,6 @@ public class ProgressServiceImpl implements ProgressService {
     @Override
     public List<Progress> allProgressByUserIdAndSprintId(Long userId, Long sprintId) {
         return progressRepository.findAllByTraineeIdAndTaskSprintId(userId,sprintId);
-    }
-
-    @Override
-    public boolean addProgressToUser(Progress progress, User user) {
-        User userEntity = userRepository.getOne(user.getId());
-        Progress progressEntity = progressRepository.getOne(progress.getId());
-        userEntity.getProgressList().add(progressEntity);
-        return userRepository.save(userEntity) != null;
     }
 
     @Override
