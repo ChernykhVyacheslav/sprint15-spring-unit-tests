@@ -15,7 +15,7 @@
 
 <div class="container">
 
-    <h3>Add Users To Marathon</h3>
+    <h3>Add Users To Marathon <span th:text="${marathon.id}"></span></h3>
     <hr>
 
     <form action="#" th:action="@{/students/{marathonId}/add-students/(marathonId=${marathon.id})}"
@@ -27,6 +27,7 @@
                 <option class="list-group-item list-group-item-info"
                         th:each="user : ${users}"
                         th:value="${user}"
+                        th:if="${!marathon.getUsers().contains(user)}"
                         th:text="${user.firstName + ' ' + user.lastName}">
                 </option>
             </select>
