@@ -54,4 +54,34 @@ public class UserController {
             return "redirect:/students";
         }
     }
+
+    @GetMapping
+    public String listStudents(Model theModel) {
+        theModel.addAttribute("students", userService.getAllByRole(User.Role.TRAINEE.toString()));
+        return "students/list-students";
+    }
+
+    @DeleteMapping("/delete/{student_id}")
+    public String delete(@RequestParam("student_id") Long id) {
+        userService.getAllByRole(User.Role.TRAINEE.toString()).remove(id);
+        return "redirect:/students";
+
+    }
+
+    @GetMapping("/student/edit")
+    public String editStudent() {
+        return "editStudent";
+    }
+
+    @PostMapping("/student/edit")
+    public String editStudent(@RequestParam String firstName, @RequestParam String lastName,
+                              @RequestParam String email, Model model) {
+        //    Marathon marathon = marathonService.getMarathonById(marathonId);
+        User student = new User();
+        student.setFirstName(firstName);
+        student.setLastName(lastName);
+        student.setEmail(email);
+        userService.createOrUpdateUser(student);
+        return "redirect:/students";
+    }
 }

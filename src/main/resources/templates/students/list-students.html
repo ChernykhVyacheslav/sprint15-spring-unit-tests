@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <!-- Подключаем jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Подключаем плагин Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+
+    <!-- Подключаем Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+            crossorigin="anonymous"></script>
+
+    <title>Students</title>
+</head>
+<body>
+<div class="container">
+    <h2>Students</h2>
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>LastName</th>
+            <th>FirstName</th>
+            <th>Email</th>
+        </tr>
+        <tbody>
+        <tr th:each="student: ${students}">
+            <td>
+                <a th:text="${student.getLastName()}"
+                   th:href="@{/student/{student_id}(student_id=${student.getId()})}"></a>
+            </td>
+            <td th:text="${student.getFirstName()}"/>
+            <td th:text="${student.getEmail()}"/>
+            <td>
+                <a th:href="@{/delete/{student_id}(id=${student.getId()})}"
+                   class="btn btn-danger btn-sm"
+                   onclick="if (!(confirm('Are you sure you want to remove this student?'))) return false">
+                    Remove from marathon
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/students/{marathon_id}/add}"
+       class="btn btn-info btn-sm">
+        Add student to Marathon
+    </a>
+</div>
+</body>
+</html>
+
+
+<!--‘Students’ page should contain information about all students from selected marathon-->
+
+<!--There should be link ‘Remove from marathon’ next to each student-->
+<!--When user clicks on ‘Remove from marathon’ link corresponding student should be deleted and 'Students' page should be reloaded-->
+<!--Add button 'Add student to Marathon'. When user clicks on 'Add student to Marathon' button 'Student' page with empty fields should be opened-->
+<!--When user clicks on student name ‘Student’ page with filled data about selected student should be opened-->
