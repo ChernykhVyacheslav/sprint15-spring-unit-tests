@@ -2,7 +2,9 @@ package com.softserve.sprint14.controller;
 
 
 import com.softserve.sprint14.entity.Marathon;
+import com.softserve.sprint14.entity.User;
 import com.softserve.sprint14.service.MarathonService;
+import com.softserve.sprint14.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,44 +21,63 @@ public class MarathonController {
 
     private MarathonService marathonService;
 
+    private UserService userService;
+
     @GetMapping
-    public String listMarathons(Model Model) {
+    public String listMarathons(Model model) {
         List<Marathon> Marathons = marathonService.getAll();
 
-        Model.addAttribute("marathons", Marathons);
+        model.addAttribute("marathons", Marathons);
+
+        model.addAttribute("showClosed", false);
 
         return "marathons/list-marathons";
     }
 
-    @GetMapping("/create")
-    public String showFormForAdd(Model Model) {
+    @GetMapping("/{userId}")
+    public String listMarathons(@PathVariable Long userId, Model theModel) {
+
+        User user = userService.getUserById(userId);
+
+        theModel.addAttribute("showClosed", false);
+
+        theModel.addAttribute("user", user);
+
+        theModel.addAttribute("marathons",
+                marathonService.getAll());
+
+        return "marathons/list-marathons";
+    }
+
+    @GetMapping("/add")
+    public String showFormForAdd(Model model) {
         Marathon Marathon = new Marathon();
 
-        Model.addAttribute("marathon", Marathon);
+        model.addAttribute("marathon", Marathon);
 
         return "marathons/marathon-form";
     }
 
     @GetMapping("/edit/{marathonId}")
     public String showFormForUpdate(@PathVariable("marathonId") Long id,
-                                    Model Model) {
+                                    Model model) {
 
         Marathon Marathon = marathonService.getMarathonById(id);
 
-        Model.addAttribute("marathon", Marathon);
+        model.addAttribute("marathon", Marathon);
 
         return "marathons/marathon-form";
     }
 
     @PostMapping("/save")
     public String saveMarathon(
-            @ModelAttribute("marathon") @Valid Marathon Marathon,
+            @ModelAttribute("marathon") @Valid Marathon marathon,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             System.out.println(bindingResult.getAllErrors());
             return "marathons/marathon-form";
         } else {
-            marathonService.createOrUpdateMarathon(Marathon);
+            marathonService.createOrUpdateMarathon(marathon);
             return "redirect:/marathons";
         }
     }
@@ -78,4 +99,32 @@ public class MarathonController {
 
     }
 
+    @GetMapping("/view/{marathonId}")
+    public String viewMarathon(@PathVariable Long marathonId, Model model) {
+
+        Marathon Marathon = marathonService.getMarathonById(marathonId);
+
+        model.addAttribute("marathon", Marathon);
+
+        return "marathons/marathon-view";
+    }
+
+    @GetMapping("/closed")
+    public String listClosedMarathons(Model theModel) {
+
+        theModel.addAttribute("showClosed", true);
+
+        theModel.addAttribute("marathons",
+                marathonService.getAll());
+
+        return "marathons/list-marathons";
+    }
+
+    @GetMapping("/open/{marathonId}")
+    public String open(@PathVariable Long marathonId) {
+
+        marathonService.openMarathonById(marathonId);
+
+        return "redirect:/marathons";
+    }
 }

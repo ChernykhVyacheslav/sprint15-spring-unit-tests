@@ -19,14 +19,15 @@ public class Marathon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private boolean isClosed = false;
+
     @NotBlank(message = "Marathon title cannot be empty")
     @Column(unique = true)
     @EqualsAndHashCode.Include
     private String title;
 
-    private boolean isClosed = false;
-
-    @ManyToMany(cascade = {CascadeType.PERSIST})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
             name = "marathon_user",
             joinColumns = @JoinColumn(name = "marathon_id"),

@@ -14,6 +14,8 @@ public interface UserService {
 
     public User createOrUpdateUser(User user);
 
+    boolean removeUserFromMarathon(User user, Marathon marathon);
+
     public List<User> getAllByRole(String role);
 
     public boolean addUserToMarathon(User user, Marathon marathon);

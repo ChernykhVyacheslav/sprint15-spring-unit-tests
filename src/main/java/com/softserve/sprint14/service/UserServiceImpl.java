@@ -75,6 +75,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean removeUserFromMarathon(User user, Marathon marathon) {
+        User userEntity = userRepository.getOne(user.getId());
+        Marathon marathonEntity = marathonRepository.getOne(marathon.getId());
+        marathonEntity.getUsers().remove(userEntity);
+        return marathonRepository.save(marathonEntity) != null;
+    }
+
+    @Override
     public List<User> getAllByRole(String role) {
         return userRepository.getAllByRole(User.Role.valueOf(role.toUpperCase()));
 //        List<User> users = userRepository.findAll()
