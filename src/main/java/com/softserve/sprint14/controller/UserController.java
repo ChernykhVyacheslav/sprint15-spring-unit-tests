@@ -1,5 +1,6 @@
 package com.softserve.sprint14.controller;
 
+import com.softserve.sprint14.dto.MarathonDTO;
 import com.softserve.sprint14.entity.Marathon;
 import com.softserve.sprint14.entity.User;
 import com.softserve.sprint14.service.MarathonService;
@@ -9,8 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/students")
@@ -27,27 +26,31 @@ public class UserController {
     }
 
     @GetMapping("/{marathonId}/add")
-    public String addUsersForm(@RequestParam("marathonId") Long theId,
-                               Model theModel, @PathVariable Long marathonId) {
+    public String addUsersForm(Model theModel, @PathVariable Long marathonId) {
 
         Marathon theMarathon = marathonService.getMarathonById(marathonId);
 
         theModel.addAttribute("marathon", theMarathon);
 
-        theModel.addAttribute("users", userService.getAll());
+        theModel.addAttribute("users", userService.getAllByRole(User.Role.TRAINEE.toString()));
 
-        return "marathons/add-students-form";
+        return "students/add-students-form";
     }
 
-    @PostMapping("/save")
-    public String addUserToMarathon(
-            @ModelAttribute("user") @Valid User user, Marathon marathon,
+    @PostMapping("/{marathonId}/add-students")
+    public String addUsersToMarathon(
+            @ModelAttribute("marathon") MarathonDTO marathon, @PathVariable Long marathonId,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             System.out.println(bindingResult.getAllErrors());
-            return "students/students-form";
+            return "students/add-students-form";
         } else {
-            userService.addUserToMarathon(user, marathon);
+            Marathon tempMarathon = marathonService.getMarathonById(marathonId);
+            for (Long userId:
+                 marathon.getUsers()) {
+                System.out.println(userId);
+                userService.addUserToMarathon(userService.getUserById(userId), tempMarathon);
+            }
             return "redirect:/students";
         }
     }

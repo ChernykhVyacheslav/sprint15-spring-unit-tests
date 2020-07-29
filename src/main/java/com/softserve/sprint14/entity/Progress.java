@@ -2,16 +2,16 @@ package com.softserve.sprint14.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.LocalDate;
 
 @Data
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"task_id", "trainee_id"})})
 public class Progress {
 
     public enum TaskStatus {
@@ -23,25 +23,19 @@ public class Progress {
     private Long id;
 
     @CreationTimestamp
-    private Instant startDate;
+    private LocalDate startDate;
 
     @UpdateTimestamp
-    private Instant updateDate;
+    private LocalDate updateDate;
 
     @Enumerated(EnumType.STRING)
     private TaskStatus status = TaskStatus.NEW;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name = "task_id")
-    @ToString.Exclude
+    @ManyToOne
     @EqualsAndHashCode.Include
     private Task task;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name = "trainee_id")
-    @ToString.Exclude
+    @ManyToOne
     @EqualsAndHashCode.Include
     private User trainee;
 }

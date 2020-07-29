@@ -23,6 +23,9 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     SprintRepository sprintRepository;
 
+    @Autowired
+    SprintService sprintService;
+
 
     @Override
     public Task createOrUpdateTask(Task task) {
@@ -45,9 +48,9 @@ public class TaskServiceImpl implements TaskService {
     public boolean addTaskToSprint(Task task, Sprint sprint) {
         Task taskEntity = taskRepository.getOne(task.getId());
         Sprint sprintEntity = sprintRepository.getOne(sprint.getId());
-        sprintEntity.getTasks().add(taskEntity);
-        taskEntity.setSprint(sprintEntity);
-        return sprintRepository.save(sprintEntity) != null && taskRepository.save(taskEntity) != null;
+        sprint.getTasks().add(taskEntity);
+        task.setSprint(sprintEntity);
+        return sprintService.createOrUpdateSprint(sprint) != null && createOrUpdateTask(task) != null;
     }
 
     @Override

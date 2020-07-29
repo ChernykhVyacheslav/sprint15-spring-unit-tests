@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.validation.ConstraintViolationException;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -80,8 +80,8 @@ class Sprint14SpringMVCApplicationTests {
                 for (int i = 0; i < 2; i++) {
                     Sprint sprint = new Sprint();
                     sprint.setTitle("Sprint" + i);
-                    sprint.setStartDate(Instant.now());
-                    sprint.setFinishDate(Instant.now().plusSeconds(1000));
+                    sprint.setStartDate(LocalDate.now());
+                    sprint.setFinishDate(LocalDate.now().plusMonths(3));
                     sprintService.createOrUpdateSprint(sprint);
                     sprintService.addSprintToMarathon(sprint, marathon);
 

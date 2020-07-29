@@ -1,6 +1,5 @@
 package com.softserve.sprint14.entity;
 
-import com.softserve.sprint14.exception.CannotDeleteOwnerWithElementsException;
 import com.softserve.sprint14.validation.StartBeforeEndDateValidation;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,7 +8,8 @@ import lombok.ToString;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.Instant;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -23,34 +23,30 @@ public class Sprint {
     private Long id;
 
     @NotNull
-    private Instant startDate;
+    private LocalDate startDate;
 
     @NotNull
-    private Instant finishDate;
+    private LocalDate finishDate;
 
     @NotBlank(message = "Sprint title cannot be empty")
     @Column(unique = true)
     @EqualsAndHashCode.Include
     private String title;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name = "marathon_id")
+    @ManyToOne
+    @JoinColumn(name="marathon_id")
     @EqualsAndHashCode.Include
     @ToString.Exclude
     private Marathon marathon;
 
-    @OneToMany(fetch = FetchType.LAZY,
-            mappedBy = "sprint",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
+    @OneToMany(mappedBy = "sprint")
     @ToString.Exclude
-    private List<Task> tasks;
+    private List<Task> tasks = new ArrayList<>();
 
-    @PreRemove
-    public void checkTaskAssociationBeforeRemoval() {
-        if (!this.tasks.isEmpty()) {
-            throw new CannotDeleteOwnerWithElementsException("Can't remove a sprint that has tasks.");
-        }
-    }
+//    @PreRemove
+//    public void checkTaskAssociationBeforeRemoval() {
+//        if (!this.tasks.isEmpty()) {
+//            throw new CannotDeleteOwnerWithElementsException("Can't remove a sprint that has tasks.");
+//        }
+//    }
 }

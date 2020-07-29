@@ -46,15 +46,14 @@ public class MarathonDTO {
     }
 
     public List<Long> getUsers() {
-        List<Long> usersId = Arrays.stream(users).map(s -> {
-            Pattern pattern = Pattern.compile("(?<=id=).+(?=,)");
+        return Arrays.stream(users).map(s -> {
+            Pattern pattern = Pattern.compile("(?<=id=).+(?=, email)");
             Matcher matcher = pattern.matcher(s);
             if (matcher.find()) {
-                return Long.getLong(matcher.group(0));
+                return Long.parseLong(matcher.group(0));
             }
             return -1L;
-        }).collect(Collectors.toList());
-        return usersId;
+        }).peek(System.out::println).collect(Collectors.toList());
     }
 
     public void setUsers(String[] users) {

@@ -36,34 +36,36 @@
             </div>
         </div>
 
-        <div class="list-group"
-             th:if="${marathon.getUsers() != null}">
+        <div class="list-group">
             <label class="col-sm-1 col-form-label col-form-label-lg">Students: </label>
-            <a th:each="student : ${marathon.getUsers()}"
-               th:href="@{/students/{id}/edit/(studentId=${student.id})}"
+            <a th:each="student : ${marathon.users}"
+               th:href="@{/students/{marathonId}/edit/{studentId}/(marathonId=${marathon.id},studentId=${student.id})}"
                class="list-group-item list-group-item-primary"
-               th:if="${student.role == 'TRAINEE'}"
-               th:text="${student.getFirstName() + ' ' + student.getLastName()}">
+               th:if="${student.getRole().toString() == 'TRAINEE'}"
+               th:text="${student.firstName + ' ' + student.lastName}">
             </a>
 
-            <a th:href="@{/students/{id}/add}"
+            <a th:href="@{/students/{marathonId}/add/(marathonId=${marathon.id})}"
                class="btn btn-info btn-sm">
                 Add New Student
             </a>
         </div>
 
-        <div class="list-group"
-             th:if="${marathon.getSprints() != null}">
+        <div class="list-group">
             <label class="col-sm-1 col-form-label col-form-label-lg">Sprints: </label>
             <a th:each="tempSprint : ${marathon.getSprints()}"
-               th:href="@{/sprints/(sprintId=${tempSprint.id})}"
+               th:href="@{/sprints/{sprintId}/(sprintId=${tempSprint.id})}"
                class="list-group-item list-group-item-primary"
                th:text="${tempSprint.title}">
+            </a>
+
+            <a th:href="@{/sprints/{marathonId}/add/(marathonId=${marathon.id})}"
+               class="btn btn-info btn-sm" th:disabled="disabled">
+                Add New Sprint
             </a>
         </div>
 
         <button type="submit" class="btn btn-info col-2">Save</button>
-
     </form>
 
     <hr>

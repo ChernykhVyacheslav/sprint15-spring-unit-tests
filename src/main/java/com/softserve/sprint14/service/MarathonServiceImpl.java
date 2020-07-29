@@ -26,10 +26,8 @@ public class MarathonServiceImpl implements MarathonService {
 
     @Override
     public Marathon getMarathonById(Long id) {
-        Optional<Marathon> marathon = marathonRepository.findById(id);
-        if (marathon.isPresent())
-            return marathon.get();
-        else throw new EntityNotFoundByIdException("No marathon for given id");
+        return marathonRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundByIdException("No marathon exists for id " + id));
     }
 
     @Override
@@ -39,22 +37,21 @@ public class MarathonServiceImpl implements MarathonService {
             if (marathonToUpdate.isPresent()) {
                 Marathon newMarathon = marathonToUpdate.get();
                 newMarathon.setTitle(marathon.getTitle());
-                newMarathon = marathonRepository.save(newMarathon);
-                return newMarathon;
+                return marathonRepository.save(newMarathon);
             }
         }
-        marathon = marathonRepository.save(marathon);
-        return marathon;
+        return marathonRepository.save(marathon);
     }
 
     @Override
     public void closeMarathonById(Long id) {
         Optional<Marathon> marathon = marathonRepository.findById(id);
         if (marathon.isPresent()){
-            marathon.get().setClosed(true);
-            marathonRepository.save(marathon.get());
+            Marathon newMarathon = marathon.get();
+            newMarathon.setClosed(true);
+            marathonRepository.save(newMarathon);
         }
-        else throw new EntityNotFoundByIdException("No marathon for given id");
+        else throw new EntityNotFoundByIdException("No marathon exists for given id");
     }
 
     @Override
@@ -62,6 +59,6 @@ public class MarathonServiceImpl implements MarathonService {
         Optional<Marathon> marathon = marathonRepository.findById(id);
         if (marathon.isPresent())
             marathonRepository.deleteById(id);
-        else throw new EntityNotFoundByIdException("No marathon for given id");
+        else throw new EntityNotFoundByIdException("No marathon exists for given id");
     }
 }

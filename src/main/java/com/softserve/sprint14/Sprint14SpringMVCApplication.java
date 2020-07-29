@@ -5,13 +5,14 @@ import com.softserve.sprint14.entity.Sprint;
 import com.softserve.sprint14.entity.User;
 import com.softserve.sprint14.service.*;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 @SpringBootApplication
 public class Sprint14SpringMVCApplication implements CommandLineRunner {
@@ -43,14 +44,16 @@ public class Sprint14SpringMVCApplication implements CommandLineRunner {
         for (int i = 0; i < 2; i++) {
             Sprint sprint = new Sprint();
             sprint.setTitle("Sprint" + i);
-            sprint.setStartDate(Instant.now());
-            sprint.setFinishDate(Instant.now().plusSeconds(1000));
+            sprint.setStartDate(LocalDate.now());
+            sprint.setFinishDate(LocalDate.now().plusMonths(3));
+            sprint.setMarathon(marathon);
             sprintService.createOrUpdateSprint(sprint);
             sprintService.addSprintToMarathon(sprint, marathon);
             Sprint sprint2 = new Sprint();
             sprint2.setTitle("Sprint" + (i + 2));
-            sprint2.setStartDate(Instant.now());
-            sprint2.setFinishDate(Instant.now().plusSeconds(1000));
+            sprint2.setStartDate(LocalDate.now());
+            sprint2.setFinishDate(LocalDate.now().plusMonths(6));
+            sprint2.setMarathon(marathon2);
             sprintService.createOrUpdateSprint(sprint2);
             sprintService.addSprintToMarathon(sprint2, marathon2);
         }
@@ -77,7 +80,11 @@ public class Sprint14SpringMVCApplication implements CommandLineRunner {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setFieldMatchingEnabled(true)
+                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
+        return modelMapper;
     }
 
 }
