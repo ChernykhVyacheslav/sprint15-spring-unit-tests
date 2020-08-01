@@ -1,2 +1,2 @@
-# sprint14-spring-mvc
-Sprint14 of Java Online Marathon, using Spring MVC.
+# sprint15-spring-unit-test
+Sprint15 of Java Online Marathon, using JUnit and Logger.
