@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -46,22 +47,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createOrUpdateUser(User user) {
-//        if (user.getId() != null) {
-//            Optional<User> userToUpdate = userRepository.findById(user.getId());
-//            if (userToUpdate.isPresent()) {
-//                User newUser = userToUpdate.get();
-//                newUser.setEmail(user.getEmail());
-//                newUser.setFirstName(user.getFirstName());
-//                newUser.setLastName(user.getLastName());
-//                newUser.setPassword(user.getPassword());
-//                newUser.setRole(user.getRole());
-//                newUser = userRepository.save(newUser);
-//                return newUser;
-//            }
-//        }
-//        user = userRepository.save(user);
-//        return user;
-        return userRepository.save(user);
+        if (user.getId() != null) {
+            Optional<User> userToUpdate = userRepository.findById(user.getId());
+            if (userToUpdate.isPresent()) {
+                User newUser = userToUpdate.get();
+                newUser.setEmail(user.getEmail());
+                newUser.setFirstName(user.getFirstName());
+                newUser.setLastName(user.getLastName());
+                newUser.setPassword(user.getPassword());
+                newUser.setRole(user.getRole());
+                newUser = userRepository.save(newUser);
+                return newUser;
+            }
+        }
+        user = userRepository.save(user);
+        return user;
     }
 
     @Override
