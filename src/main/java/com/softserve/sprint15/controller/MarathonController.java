@@ -71,6 +71,7 @@ public class MarathonController {
     public String showFormForAdd(Model model) {
 
         logger.info("Show form for add");
+
         Marathon Marathon = new Marathon();
 
         model.addAttribute("marathon", Marathon);
@@ -81,7 +82,7 @@ public class MarathonController {
     @GetMapping("/edit/{marathonId}")
     public String showFormForUpdate(@PathVariable("marathonId") Long id,
                                     Model model) {
-        logger.info("Show form for update marathons  #" + id);
+        logger.info("Show form for update marathon #" + id);
 
         Marathon Marathon = marathonService.getMarathonById(id);
 
