@@ -1,4 +1,4 @@
-package com.softserve.sprint15.sprint15unitTests;
+package com.softserve.sprint15;
 
 import com.softserve.sprint15.entity.*;
 import com.softserve.sprint15.exception.CannotDeleteOwnerWithElementsException;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import static com.softserve.sprint15.entity.Progress.TaskStatus.FAIL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-;
+
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

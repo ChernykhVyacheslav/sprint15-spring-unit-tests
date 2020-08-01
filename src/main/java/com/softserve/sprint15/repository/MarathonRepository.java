@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MarathonRepository extends JpaRepository<Marathon,Long> {
 
+    Marathon findMarathonByTitle(String title);
 }
