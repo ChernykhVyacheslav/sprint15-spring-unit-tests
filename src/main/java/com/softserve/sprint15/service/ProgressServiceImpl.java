@@ -38,10 +38,15 @@ public class ProgressServiceImpl implements ProgressService {
     @Override
     public boolean addTaskForStudent(Task task, User user) {
         if (user.getRole() == User.Role.TRAINEE){
+            Task taskEntity = taskRepository.getOne(task.getId());
+            User userEntity = userRepository.getOne(user.getId());
             Progress newProgress = new Progress();
-            newProgress.setTask(task);
-            newProgress.setTrainee(user);
-            return progressRepository.save(newProgress) != null;
+            newProgress.setTask(taskEntity);
+            newProgress.setTrainee(userEntity);
+            newProgress.setStatus(Progress.TaskStatus.NEW);
+            createOrUpdateProgress(newProgress);
+            userEntity.getProgressList().add(newProgress);
+            return userRepository.save(userEntity) != null;
         }
         return false;
     }

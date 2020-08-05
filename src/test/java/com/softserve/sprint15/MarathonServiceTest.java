@@ -1,19 +1,12 @@
 package com.softserve.sprint15;
 
 
+import com.softserve.sprint15.config.TestApplicationConfiguration;
 import com.softserve.sprint15.entity.Marathon;
 import com.softserve.sprint15.entity.Sprint;
 import com.softserve.sprint15.entity.User;
 import com.softserve.sprint15.repository.MarathonRepository;
-import com.softserve.sprint15.repository.SprintRepository;
-import com.softserve.sprint15.repository.UserRepository;
 import com.softserve.sprint15.service.MarathonService;
-import com.softserve.sprint15.service.UserService;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,8 +16,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK,
+        classes = TestApplicationConfiguration.class)
 public class MarathonServiceTest {
 
     @MockBean
@@ -144,6 +142,6 @@ public class MarathonServiceTest {
         Mockito.when(marathonRepository.save(marathon)).thenReturn(marathon);
         Mockito.when(marathonRepository.findById(marathon.getId())).thenReturn(Optional.of(marathon));
         marathonService.createOrUpdateMarathon(marathon);
-        marathonService.deleteMarathonById(marathon.getId());
+        marathonService.deleteMarathonByIdSafe(marathon.getId());
     }
 }

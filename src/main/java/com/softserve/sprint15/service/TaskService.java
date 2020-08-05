@@ -16,4 +16,8 @@ public interface TaskService {
     public Task createOrUpdateTask(Task task);
 
     public List<Task> getAllTasksOfSprint(Sprint sprint);
+
+    public void deleteTaskByIdSafe(Long id);
+
+    public void deleteTaskByIdUnsafe(Long id);
 }

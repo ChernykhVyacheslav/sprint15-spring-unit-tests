@@ -1,5 +1,6 @@
 package com.softserve.sprint15;
 
+import com.softserve.sprint15.config.TestApplicationConfiguration;
 import com.softserve.sprint15.entity.Marathon;
 import com.softserve.sprint15.entity.User;
 import com.softserve.sprint15.repository.MarathonRepository;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = TestApplicationConfiguration.class)
 public class UserServiceTest {
 
     @MockBean
@@ -65,19 +66,17 @@ public class UserServiceTest {
 
     @Test
     public void getUserByIdTest() {
-        final Long id = 1L;
         User user = new User();
-        user.setId(id);
         user.setEmail("userUser@dh.com");
         user.setFirstName("TraineeName");
         user.setLastName("TraineeSurname");
         user.setPassword("qwerty^qwerty");
         user.setRole(User.Role.TRAINEE);
-        user = userService.createOrUpdateUser(user);
+        userService.createOrUpdateUser(user);
         Mockito.when(userRepository.save(user)).thenReturn(user);
-        Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
-        Assertions.assertEquals(user, userService.getUserById(id));
+        Assertions.assertEquals(user, userService.getUserById(user.getId()));
     }
 
     @Test

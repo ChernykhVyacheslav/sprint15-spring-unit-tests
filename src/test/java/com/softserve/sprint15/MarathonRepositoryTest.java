@@ -4,27 +4,20 @@ import com.softserve.sprint15.entity.Marathon;
 import com.softserve.sprint15.repository.MarathonRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class MarathonRepositoryTest {
 
     @Autowired
     private MarathonRepository marathonRepository;
 
-    @Autowired
-    private TestEntityManager entityManager;
 
     @Test
     void injectedComponentsAreNotNull(){
         Assertions.assertNotNull(marathonRepository);
-        Assertions.assertNotNull(entityManager);
     }
 
     @Test

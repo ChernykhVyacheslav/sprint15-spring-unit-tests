@@ -1,5 +1,6 @@
 package com.softserve.sprint15;
 
+import com.softserve.sprint15.config.TestApplicationConfiguration;
 import com.softserve.sprint15.entity.*;
 import com.softserve.sprint15.exception.CannotDeleteOwnerWithElementsException;
 import com.softserve.sprint15.exception.EntityNotFoundByIdException;
@@ -21,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 
-@SpringBootTest
+@SpringBootTest(classes = TestApplicationConfiguration.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class Sprint15SpringApplicationTests {
+class Sprint15SpringIntegrationTests {
 
     private static boolean setUpIsDone = false;
 
@@ -39,7 +40,7 @@ class Sprint15SpringApplicationTests {
     MarathonService marathonService;
 
     @Autowired
-    public Sprint15SpringApplicationTests(UserService userService, TaskService taskService,
+    public Sprint15SpringIntegrationTests(UserService userService, TaskService taskService,
                                           ProgressService progressService, SprintService sprintService,
                                           MarathonService marathonService) {
         this.userService = userService;
@@ -56,6 +57,8 @@ class Sprint15SpringApplicationTests {
                 Marathon marathon = new Marathon();
                 marathon.setTitle("Marathon1");
                 marathonService.createOrUpdateMarathon(marathon);
+                List<User> trainees = new ArrayList<>();
+                List<Task> tasks = new ArrayList<>();
 
                 for (int i = 0; i < 2; i++) {
                     User mentor = new User();
@@ -75,13 +78,14 @@ class Sprint15SpringApplicationTests {
                     trainee.setRole(User.Role.TRAINEE);
                     userService.createOrUpdateUser(trainee);
                     userService.addUserToMarathon(trainee, marathon);
+                    trainees.add(trainee);
                 }
 
                 for (int i = 0; i < 2; i++) {
                     Sprint sprint = new Sprint();
                     sprint.setTitle("Sprint" + i);
                     sprint.setStartDate(LocalDate.now());
-                    sprint.setFinishDate(LocalDate.now().plusMonths(3));
+                    sprint.setFinishDate(LocalDate.now().plusMonths(6));
                     sprintService.createOrUpdateSprint(sprint);
                     sprintService.addSprintToMarathon(sprint, marathon);
 
@@ -89,13 +93,16 @@ class Sprint15SpringApplicationTests {
                         Task task = new Task();
                         task.setTitle("Task" + i + j);
                         taskService.createOrUpdateTask(task);
-                        taskService.addTaskToSprint(task, sprint);
+                        taskService.addTaskToSprint(task, sprintService.getSprintById(i + 1L));
+                        tasks.add(task);
+                    }
+                }
 
-                        List<User> trainees = userService.getAllByRole("TRAINEE");
-                        for (User trainee :
-                                trainees) {
-                            progressService.addTaskForStudent(task, trainee);
-                        }
+                for (Task task:
+                        tasks) {
+                    for (User trainee:
+                            trainees) {
+                        progressService.addTaskForStudent(task, trainee);
                     }
                 }
             } catch (ConstraintViolationException |
@@ -358,7 +365,7 @@ class Sprint15SpringApplicationTests {
     public void checkDeleteMarathonFail() {
         Throwable e = new Throwable();
         try {
-            marathonService.deleteMarathonById(1L);
+            marathonService.deleteMarathonByIdSafe(1L);
         } catch (CannotDeleteOwnerWithElementsException ex) {
             e = ex;
         }
@@ -380,7 +387,7 @@ class Sprint15SpringApplicationTests {
             taskService.deleteTask(task);
         }
         sprintService.deleteSprint(sprint);
-        marathonService.deleteMarathonById(1L);
+        marathonService.deleteMarathonByIdSafe(1L);
         try {
             marathonService.getMarathonById(1L);
         } catch (EntityNotFoundByIdException ex) {

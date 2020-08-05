@@ -1,5 +1,6 @@
 package com.softserve.sprint15.service;
 
+import com.softserve.sprint15.entity.Progress;
 import com.softserve.sprint15.entity.Sprint;
 import com.softserve.sprint15.entity.Task;
 import com.softserve.sprint15.exception.EntityNotFoundByIdException;
@@ -26,6 +27,9 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     SprintService sprintService;
 
+    @Autowired
+    ProgressService progressService;
+
 
     @Override
     public Task createOrUpdateTask(Task task) {
@@ -48,9 +52,8 @@ public class TaskServiceImpl implements TaskService {
     public boolean addTaskToSprint(Task task, Sprint sprint) {
         Task taskEntity = taskRepository.getOne(task.getId());
         Sprint sprintEntity = sprintRepository.getOne(sprint.getId());
-        sprint.getTasks().add(taskEntity);
-        task.setSprint(sprintEntity);
-        return sprintService.createOrUpdateSprint(sprint) != null && createOrUpdateTask(task) != null;
+        sprintEntity.getTasks().add(taskEntity);
+        return sprintRepository.save(sprintEntity) != null;
     }
 
     @Override
@@ -77,5 +80,29 @@ public class TaskServiceImpl implements TaskService {
             return task;
         }
         return null;
+    }
+
+    @Override
+    public void deleteTaskByIdSafe(Long id) {
+        Optional<Task> task = taskRepository.findById(id);
+        if (task.isPresent())
+            taskRepository.deleteById(id);
+        else throw new EntityNotFoundByIdException("No task exists for given id");
+    }
+
+    @Override
+    public void deleteTaskByIdUnsafe(Long id) {
+        Optional<Task> task = taskRepository.findById(id);
+        if (task.isPresent()) {
+            deleteAllTasksUnsafe(task.get());
+            taskRepository.deleteById(id);
+        } else throw new EntityNotFoundByIdException("No task exists for given id");
+
+    }
+
+    private void deleteAllTasksUnsafe(Task task) {
+        for (Progress progress : task.getProgressList()) {
+            progressService.deleteProgress(progress);
+        }
     }
 }

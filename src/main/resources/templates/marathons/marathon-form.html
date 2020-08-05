@@ -36,7 +36,8 @@
             </div>
         </div>
 
-        <div class="list-group">
+        <div class="list-group"
+             th:if="${marathon.id != null}">
             <label class="col-sm-1 col-form-label col-form-label-lg">Students: </label>
             <a th:each="student : ${marathon.users}"
                th:href="@{/students/{marathonId}/edit/{studentId}/(marathonId=${marathon.id},studentId=${student.id})}"
@@ -51,7 +52,8 @@
             </a>
         </div>
 
-        <div class="list-group">
+        <div class="list-group"
+             th:if="${marathon.id != null}">
             <label class="col-sm-1 col-form-label col-form-label-lg">Sprints: </label>
             <a th:each="tempSprint : ${marathon.getSprints()}"
                th:href="@{/sprints/{sprintId}/(sprintId=${tempSprint.id})}"

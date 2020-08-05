@@ -1,6 +1,7 @@
 package com.softserve.sprint15.service;
 
 import com.softserve.sprint15.entity.Marathon;
+import com.softserve.sprint15.entity.Sprint;
 import com.softserve.sprint15.exception.EntityNotFoundByIdException;
 import com.softserve.sprint15.repository.MarathonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class MarathonServiceImpl implements MarathonService {
 
     @Autowired
     MarathonRepository marathonRepository;
+
+    @Autowired
+    SprintService sprintService;
 
     @Override
     public List<Marathon> getAll() {
@@ -46,30 +50,45 @@ public class MarathonServiceImpl implements MarathonService {
     @Override
     public void closeMarathonById(Long id) {
         Optional<Marathon> marathon = marathonRepository.findById(id);
-        if (marathon.isPresent()){
+        if (marathon.isPresent()) {
             Marathon newMarathon = marathon.get();
             newMarathon.setClosed(true);
             marathonRepository.save(newMarathon);
-        }
-        else throw new EntityNotFoundByIdException("No marathon exists for given id");
+        } else throw new EntityNotFoundByIdException("No marathon exists for given id");
     }
 
     @Override
     public void openMarathonById(Long id) {
         Optional<Marathon> marathon = marathonRepository.findById(id);
-        if (marathon.isPresent()){
+        if (marathon.isPresent()) {
             Marathon newMarathon = marathon.get();
             newMarathon.setClosed(false);
             marathonRepository.save(newMarathon);
-        }
-        else throw new EntityNotFoundByIdException("No marathon exists for given id");
+        } else throw new EntityNotFoundByIdException("No marathon exists for given id");
     }
 
     @Override
-    public void deleteMarathonById(Long id) {
+    public void deleteMarathonByIdSafe(Long id) {
         Optional<Marathon> marathon = marathonRepository.findById(id);
         if (marathon.isPresent())
             marathonRepository.deleteById(id);
         else throw new EntityNotFoundByIdException("No marathon exists for given id");
+    }
+
+    @Override
+    public void deleteMarathonByIdUnsafe(Long id) {
+        Optional<Marathon> marathon = marathonRepository.findById(id);
+        if (marathon.isPresent()) {
+            deleteAllSprintsUnsafe(marathon.get());
+            marathonRepository.deleteById(id);
+        }
+        else throw new EntityNotFoundByIdException("No marathon exists for given id");
+    }
+
+    private void deleteAllSprintsUnsafe(Marathon marathon) {
+        for (Sprint sprint :
+                marathon.getSprints()) {
+            sprintService.deleteSprintByIdUnsafe(sprint.getId());
+        }
     }
 }

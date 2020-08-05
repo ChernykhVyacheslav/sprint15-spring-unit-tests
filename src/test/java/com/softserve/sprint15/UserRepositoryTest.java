@@ -4,30 +4,26 @@ import com.softserve.sprint15.entity.User;
 import com.softserve.sprint15.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class UserRepositoryTest {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    private TestEntityManager entityManager;
+    public UserRepositoryTest(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Test
     void injectedComponentsAreNotNull(){
         Assertions.assertNotNull(userRepository);
-        Assertions.assertNotNull(entityManager);
     }
 
     @Test
