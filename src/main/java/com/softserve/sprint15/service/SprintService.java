@@ -11,4 +11,8 @@ public interface SprintService {
     public Sprint createOrUpdateSprint(Sprint sprint);
     public Sprint getSprintById(Long id);
     public Sprint deleteSprint(Sprint sprint);
+
+    void deleteSprintByIdSafe(Long id);
+
+    void deleteSprintByIdUnsafe(Long id);
 }

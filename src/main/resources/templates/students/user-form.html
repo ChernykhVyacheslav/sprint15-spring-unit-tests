@@ -61,7 +61,8 @@
             </div>
         </div>
 
-        <div class="list-group">
+        <div class="list-group"
+             th:if="${user.id != null}">
             <label class="col-sm-1 col-form-label col-form-label-lg">Marathons: </label>
             <div class="row" th:each="marathon : *{marathons}">
                 <div class="col">

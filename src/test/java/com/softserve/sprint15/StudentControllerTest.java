@@ -1,5 +1,6 @@
 package com.softserve.sprint15;
 
+import com.softserve.sprint15.config.TestApplicationConfiguration;
 import com.softserve.sprint15.dto.MarathonDTO;
 import com.softserve.sprint15.dto.UserDTO;
 import com.softserve.sprint15.entity.Marathon;
@@ -7,10 +8,12 @@ import com.softserve.sprint15.entity.User;
 import com.softserve.sprint15.service.MarathonService;
 import com.softserve.sprint15.service.UserService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -19,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK,
+        classes = TestApplicationConfiguration.class)
 @AutoConfigureMockMvc
 @Transactional
 public class StudentControllerTest {

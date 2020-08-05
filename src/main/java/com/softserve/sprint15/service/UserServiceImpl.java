@@ -2,13 +2,13 @@ package com.softserve.sprint15.service;
 
 import com.softserve.sprint15.entity.Marathon;
 import com.softserve.sprint15.entity.User;
+import com.softserve.sprint15.exception.EntityNotFoundByIdException;
 import com.softserve.sprint15.repository.MarathonRepository;
-import com.softserve.sprint15.repository.ProgressRepository;
 import com.softserve.sprint15.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,18 +19,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    private final ProgressRepository progressRepository;
-
     private final MarathonRepository marathonRepository;
 
-    private final MarathonService marathonService;
-
-    public UserServiceImpl(UserRepository userRepository, ProgressRepository progressRepository,
-                           MarathonRepository marathonRepository, MarathonService marathonService) {
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, MarathonRepository marathonRepository) {
         this.userRepository = userRepository;
-        this.progressRepository = progressRepository;
         this.marathonRepository = marathonRepository;
-        this.marathonService = marathonService;
     }
 
     @Override
@@ -42,7 +36,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(("No existing user found with id "+id)));
+                .orElseThrow(() -> new EntityNotFoundByIdException(("No existing user found with id "+id)));
     }
 
     @Override
@@ -60,8 +54,7 @@ public class UserServiceImpl implements UserService {
                 return newUser;
             }
         }
-        user = userRepository.save(user);
-        return user;
+        return userRepository.save(user);
     }
 
     @Override
@@ -85,11 +78,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllByRole(String role) {
         return userRepository.getAllByRole(User.Role.valueOf(role.toUpperCase()));
-//        List<User> users = userRepository.findAll()
-//                .stream()
-//                .filter(user -> user.getRole().toString().equals(role))
-//                .collect(Collectors.toList());
-//        return users.isEmpty() ? new ArrayList<>() : users;
     }
 
     @Override
@@ -98,15 +86,5 @@ public class UserServiceImpl implements UserService {
         Marathon marathonEntity = marathonRepository.getOne(marathon.getId());
         marathonEntity.getUsers().add(userEntity);
         return marathonRepository.save(marathonEntity) != null;
-//        User userEntity = getUserById(user.getId());
-//        Marathon marathonEntity = marathonService.getMarathonById(marathon.getId());
-//        marathonEntity.getUsers().add(userEntity);
-//        userEntity.getMarathons().add(marathonEntity);
-//        user.getMarathons().add(marathon);
-//        marathon.getUsers().add(user);
-//        createOrUpdateUser(user);
-//        marathonService.createOrUpdateMarathon(marathon);
-//        return marathonRepository.save(marathonEntity) != null
-//                && userRepository.save(userEntity) != null;
     }
 }

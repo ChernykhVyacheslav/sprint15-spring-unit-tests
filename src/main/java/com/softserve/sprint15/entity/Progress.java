@@ -31,11 +31,15 @@ public class Progress {
     @Enumerated(EnumType.STRING)
     private TaskStatus status = TaskStatus.NEW;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinColumn(name = "task_id")
     @EqualsAndHashCode.Include
     private Task task;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinColumn(name = "trainee_id")
     @EqualsAndHashCode.Include
     private User trainee;
 }

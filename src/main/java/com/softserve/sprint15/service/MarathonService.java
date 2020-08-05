@@ -11,6 +11,8 @@ public interface MarathonService {
 
     void openMarathonById(Long id);
 
-    public void deleteMarathonById(Long id);
+    public void deleteMarathonByIdSafe(Long id);
     public void closeMarathonById(Long id);
+
+    void deleteMarathonByIdUnsafe(Long id);
 }

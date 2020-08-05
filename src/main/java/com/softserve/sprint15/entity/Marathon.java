@@ -1,5 +1,6 @@
 package com.softserve.sprint15.entity;
 
+import com.softserve.sprint15.exception.CannotDeleteOwnerWithElementsException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -26,7 +27,7 @@ public class Marathon {
     @EqualsAndHashCode.Include
     private String title;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
             name = "marathon_user",
@@ -34,14 +35,15 @@ public class Marathon {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> users = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
-    @JoinColumn(name = "marathon_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH},
+    mappedBy = "marathon")
     private List<Sprint> sprints = new ArrayList<>();
 
-//    @PreRemove
-//    public void checkSprintAssociationBeforeRemoval() {
-//        if (!this.sprints.isEmpty()) {
-//            throw new CannotDeleteOwnerWithElementsException("Can't remove a marathon that has sprints.");
-//        }
-//    }
+    @PreRemove
+    public void checkSprintAssociationBeforeRemoval() {
+        if (!this.sprints.isEmpty()) {
+            throw new CannotDeleteOwnerWithElementsException("Can't remove a marathon that has sprints.");
+        }
+    }
 }

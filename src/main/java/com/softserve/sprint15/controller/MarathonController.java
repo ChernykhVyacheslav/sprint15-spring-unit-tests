@@ -121,7 +121,7 @@ public class MarathonController {
 
         logger.info("Delete marathons with id #" + id);
 
-        marathonService.deleteMarathonById(id);
+        marathonService.deleteMarathonByIdUnsafe(id);
 
         return "redirect:/marathons";
 

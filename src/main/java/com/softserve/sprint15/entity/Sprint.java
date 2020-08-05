@@ -1,5 +1,6 @@
 package com.softserve.sprint15.entity;
 
+import com.softserve.sprint15.exception.CannotDeleteOwnerWithElementsException;
 import com.softserve.sprint15.validation.StartBeforeEndDateValidation;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,20 +34,23 @@ public class Sprint {
     @EqualsAndHashCode.Include
     private String title;
 
-    @ManyToOne
-    @JoinColumn(name="marathon_id")
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinColumn(name = "marathon_id")
     @EqualsAndHashCode.Include
     @ToString.Exclude
     private Marathon marathon;
 
-    @OneToMany(mappedBy = "sprint")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH},
+            mappedBy = "sprint")
     @ToString.Exclude
     private List<Task> tasks = new ArrayList<>();
 
-//    @PreRemove
-//    public void checkTaskAssociationBeforeRemoval() {
-//        if (!this.tasks.isEmpty()) {
-//            throw new CannotDeleteOwnerWithElementsException("Can't remove a sprint that has tasks.");
-//        }
-//    }
+    @PreRemove
+    public void checkTaskAssociationBeforeRemoval() {
+        if (!this.tasks.isEmpty()) {
+            throw new CannotDeleteOwnerWithElementsException("Can't remove a sprint that has tasks.");
+        }
+    }
 }

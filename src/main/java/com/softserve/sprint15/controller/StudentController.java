@@ -93,7 +93,7 @@ public class StudentController {
                 userService.addUserToMarathon(userService.getUserById(userId), tempMarathon);
             }
             logger.info("Added successfully!");
-            return "redirect:/students";
+            return "redirect:/marathons";
         }
     }
 

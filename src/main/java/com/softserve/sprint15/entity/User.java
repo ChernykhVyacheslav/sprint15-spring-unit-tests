@@ -50,8 +50,9 @@ public class User {
     @ToString.Exclude
     private String password;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
             name = "marathon_user",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -59,7 +60,9 @@ public class User {
     @ToString.Exclude
     private List<Marathon> marathons = new ArrayList<>();
 
-    @OneToMany(mappedBy = "trainee")
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "trainee",
+            cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<Progress> progressList = new ArrayList<>();
 
