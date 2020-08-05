@@ -2,12 +2,13 @@ package com.softserve.sprint15.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
@@ -16,14 +17,18 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 
     @ExceptionHandler(value = {EntityNotFoundByIdException.class, EntityNotFoundException.class,
             org.hibernate.boot.MappingNotFoundException.class, MappingNotFoundException.class})
-    public String handlePageNotFoundException() {
+    public ModelAndView handlePageNotFoundException(Exception exception) {
         logger.error("MappingNotFoundException handler executed");
-        return "error-404";
+        ModelAndView modelAndView = new ModelAndView("error-404", HttpStatus.NOT_FOUND);
+        modelAndView.addObject("info", exception.getMessage());
+        return modelAndView;
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public String handleServerSideException(HttpServletRequest request) {
-        logger.info("Server Side Error Occured:: URL=" + request.getRequestURL());
-        return "error-500";
+    public ModelAndView handleServerSideException(Exception exception) {
+        logger.error("RuntimeException handler executed");
+        ModelAndView modelAndView = new ModelAndView("error-500", HttpStatus.INTERNAL_SERVER_ERROR);
+        modelAndView.addObject("info", exception.getMessage());
+        return modelAndView;
     }
 }
