@@ -1,5 +1,6 @@
 package com.softserve.sprint15.exception;
 
+import org.hibernate.boot.MappingNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationExceptionHandler.class);
 
     @ExceptionHandler(value = {EntityNotFoundByIdException.class, EntityNotFoundException.class,
-            org.hibernate.boot.MappingNotFoundException.class, MappingNotFoundException.class})
+            MappingNotFoundException.class, CustomMappingNotFoundException.class})
     public ModelAndView handlePageNotFoundException(Exception exception) {
         logger.error("MappingNotFoundException handler executed");
         ModelAndView modelAndView = new ModelAndView("error-404", HttpStatus.NOT_FOUND);

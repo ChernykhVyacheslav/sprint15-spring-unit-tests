@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Page with such address does not exist")
-public class MappingNotFoundException extends RuntimeException {
+public class CustomMappingNotFoundException extends RuntimeException {
 
-    public MappingNotFoundException(Long id) {
+    public CustomMappingNotFoundException(Long id) {
         super("PageNotFoundException with id="+id);
     }
 }
